@@ -1,3 +1,8 @@
-export default function addMeMaybe(number, func) {
+function addMeMaybe(number, func) {
     func(number + 1);
 }
+
+
+module.exports = {
+    addMeMaybe,
+};
