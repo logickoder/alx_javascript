@@ -1,3 +1,3 @@
-for (const element of ['C is fun', 'Python is cool', 'Javascript is amazing']) {
+for (const element of ['C is fun', 'Python is cool', 'JavaScript is amazing']) {
     console.log(element);
 }
