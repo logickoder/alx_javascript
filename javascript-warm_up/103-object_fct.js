@@ -3,7 +3,7 @@ const myObject = {
     value: 12
 };
 console.log(myObject);
-function incr() {
+myObject.incr = () => {
     myObject.value++;
 }
 myObject.incr();
