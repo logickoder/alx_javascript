@@ -11,9 +11,11 @@ request(url, function (_error, _response, body) {
     const films = body['results']
     films.forEach(film => {
         const characters = film['characters'];
-        if (characters.includes(`https://swapi-api.alx-tools.com/api/people/${characterId}/`)) {
-            count += 1
-        }
+        characters.forEach(character => {
+            if (character.includes(characterId)) {
+                count += 1
+            }
+        })
     })
 
     console.log(count)
