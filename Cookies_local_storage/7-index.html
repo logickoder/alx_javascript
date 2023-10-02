@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Cookies & local storage</title>
+</head>
+<body>
+
+<script>
+    const availableItems = ['Shampoo', 'Soap', 'Sponge', 'Water']
+
+    function checkStorageSupport() {
+        const exists = typeof (Storage) !== 'undefined'
+        if (!exists) {
+            alert('Sorry, your browser does not support Web storage. Try again with a better one')
+        }
+        return exists
+    }
+
+    function getCartFromStorage() {
+        const cart = sessionStorage.getItem('cart')
+        if (cart) {
+            return JSON.parse(cart)
+        } else {
+            return {}
+        }
+    }
+
+    function saveCartToStorage(cart) {
+        sessionStorage.setItem('cart', JSON.stringify(cart))
+    }
+
+    function addItemToCart(item) {
+        const cart = getCartFromStorage()
+        // if the item already exists in the cart, increase the quantity
+        if (cart[item]) {
+            cart[item] += 1
+        } else {
+            cart[item] = 1
+        }
+        saveCartToStorage(cart)
+        displayCart()
+    }
+
+    function removeItemFromCart(item) {
+        const cart = getCartFromStorage()
+        delete cart[item]
+        saveCartToStorage(cart)
+        displayCart()
+    }
+
+    function clearCart() {
+        sessionStorage.clear()
+        displayCart()
+    }
+
+    function createStore() {
+        const heading = document.createElement('h2')
+        heading.textContent = 'Available products:'
+
+        const items = document.createElement('ul')
+        items.append(
+            ...availableItems.map((availableItem) => {
+                const item = document.createElement('li')
+                item.textContent = availableItem
+                item.onclick = (_) => addItemToCart(availableItem)
+                return item
+            })
+        )
+
+        document.body.append(heading, items)
+    }
+
+    function displayCart() {
+
+        let body = document.getElementById('cart')
+        // clear the cart if it already exists
+        if (body) {
+            let items = body.getElementsByTagName('ul')
+            for (const item of items) {
+                item.remove()
+            }
+        } else {
+            const heading = document.createElement('h2')
+            heading.textContent = 'Your cart:'
+
+            body = document.createElement('div')
+            body.id = 'cart'
+            body.appendChild(heading)
+
+            document.body.appendChild(body)
+        }
+
+        updateCart()
+    }
+
+    function updateCart() {
+        const list = document.createElement('ul')
+
+        const cart = getCartFromStorage()
+
+        if (Object.keys(cart).length === 0) {
+            const info = document.createElement('li')
+            info.textContent = 'Your cart is empty'
+            list.appendChild(info)
+        } else {
+            const entries = Object.entries(cart)
+
+            const clear = document.createElement('li')
+            clear.textContent = 'Clear my cart'
+            clear.onclick = clearCart
+            list.appendChild(clear)
+
+            list.append(
+                ...entries.map(([key, quantity]) => {
+                    const item = document.createElement('li')
+                    item.textContent = `${key} x ${quantity}`
+
+                    const span = document.createElement('span')
+                    span.textContent = ' (remove)'
+                    span.onclick = (_) => removeItemFromCart(key)
+
+                    item.appendChild(span)
+
+                    return item
+                })
+            )
+        }
+
+        document.getElementById('cart').appendChild(list)
+    }
+
+    window.addEventListener('load', (_) => {
+        if (checkStorageSupport()) {
+            createStore()
+            displayCart()
+        }
+    })
+</script>
+</body>
+</html>

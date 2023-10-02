@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Cookies Local Storage</title>
+</head>
+<body>
+<div id="login">
+    <h2>Login to the website</h2>
+    <form onsubmit="setCookiesAndShowWelcomeMessage()">
+        <input type="text" id="firstname" name="username" placeholder="Firstname">
+        <input type="email" id="email" name="email" placeholder="Email">
+        <input type="submit" value="Login me in">
+    </form>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.5/dist/js.cookie.min.js"></script>
+<script type="text/javascript">
+    function setCookiesAndShowWelcomeMessage() {
+        const firstname = document.getElementById('firstname').value
+        const email = document.getElementById('email').value
+
+        const daysToExpire = 10
+
+        const expiryDate = new Date()
+        expiryDate.setTime(expiryDate.getTime() + (daysToExpire * 24 * 60 * 60 * 1000))
+
+        const attributes = {
+            expires: expiryDate
+        }
+
+        Cookies.set('firstname', firstname, attributes)
+        Cookies.set('email', email, attributes)
+    }
+
+    function showForm() {
+        document.getElementById("welcome").remove()
+        document.getElementById("login").hidden = false
+    }
+
+    function hideForm() {
+        document.getElementById("login").hidden = true
+    }
+
+    function deleteCookiesAndShowForm() {
+        Cookies.remove('firstname')
+        Cookies.remove('email')
+        showForm()
+    }
+
+    function showWelcomeMessageOrForm() {
+        const firstname = Cookies.get('firstname')
+        if (firstname) {
+            hideForm()
+
+            const message = document.createElement('h1')
+            message.id = 'welcome'
+            message.textContent = `Welcome: ${firstname}`
+            message.style.display = 'inline-block'
+
+            const link = document.createElement('a')
+            link.textContent = '(logout)'
+            link.style.textDecoration = 'none'
+            link.style.fontStyle = 'italic'
+            link.style.marginLeft = '10px'
+            link.onclick = (_) => deleteCookiesAndShowForm()
+
+            message.appendChild(link)
+
+            document.body.appendChild(message)
+        } else {
+            showForm()
+        }
+    }
+
+    window.addEventListener('load', showWelcomeMessageOrForm)
+</script>
+</body>
+</html>
